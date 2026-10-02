@@ -2,9 +2,10 @@ export const SITE = {
   name: 'RewriteAI',
   version: 'v0.1.0',
   links: {
-    windows: '#', // replace with your .msi URL
-    macos: '#',   // replace with your .dmg URL
-    github: '#',
+    windowsMsi: '/downloadFiles/RewriteAI-Setup.msi',
+    windowsExe: '/downloadFiles/RewriteAI-Setup.exe',
+    macos: '#',
+    github: 'https://github.com/Mbalajiviswanadh/RewriteAI-Desktop',
     docs: '#',
     privacy: '#',
     contact: '#',

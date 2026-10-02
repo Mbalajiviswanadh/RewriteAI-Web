@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Apple, Monitor } from 'lucide-react'
+import { Apple, Monitor, ChevronDown, X } from 'lucide-react'
 import Container from '../components/ui/Container'
 import Button from '../components/ui/Button'
 import { ACTIONS, SITE, TONES } from '../data/content'
@@ -48,6 +48,26 @@ function AssistantMock() {
 }
 
 export default function Hero() {
+  const [winOpen, setWinOpen] = useState(false)
+  const [macToast, setMacToast] = useState(false)
+  const dropdownRef = useRef(null)
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setWinOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  // Auto-dismiss macOS toast
+  useEffect(() => {
+    if (!macToast) return
+    const t = setTimeout(() => setMacToast(false), 4000)
+    return () => clearTimeout(t)
+  }, [macToast])
+
   return (
     <section id="top" className="pt-36 pb-28 text-center">
       <Container>
@@ -67,11 +87,91 @@ export default function Hero() {
           initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease, delay: 0.24 }}
           className="mt-9 flex flex-wrap items-center justify-center gap-3"
         >
-          <Button href={SITE.links.windows}><Monitor size={16} /> Download for Windows</Button>
-          <Button variant="secondary" href={SITE.links.macos}><Apple size={16} /> Download for macOS</Button>
+          {/* ── Windows dropdown ── */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setWinOpen((v) => !v)}
+              className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
+            >
+              <Monitor size={16} />
+              Download for Windows
+              <ChevronDown size={14} className={`transition-transform duration-200 ${winOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            <AnimatePresence>
+              {winOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                  transition={{ duration: 0.18 }}
+                  className="absolute left-1/2 top-full z-20 mt-2 w-52 -translate-x-1/2 overflow-hidden rounded-xl border border-line bg-paper shadow-xl shadow-black/10"
+                >
+                  <a
+                    href={SITE.links.windowsMsi}
+                    download="RewriteAI-Setup.msi"
+                    className="flex items-center gap-3 px-4 py-3 text-sm text-ink transition-colors hover:bg-paper-alt"
+                    onClick={() => setWinOpen(false)}
+                  >
+                    <Monitor size={15} className="shrink-0 text-ink-faint" />
+                    <span>
+                      <span className="font-medium">Installer</span>
+                      <span className="ml-1.5 text-xs text-ink-faint">.msi</span>
+                    </span>
+                  </a>
+                  <div className="mx-3 border-t border-line" />
+                  <a
+                    href={SITE.links.windowsExe}
+                    download="RewriteAI-Setup.exe"
+                    className="flex items-center gap-3 px-4 py-3 text-sm text-ink transition-colors hover:bg-paper-alt"
+                    onClick={() => setWinOpen(false)}
+                  >
+                    <Monitor size={15} className="shrink-0 text-ink-faint" />
+                    <span>
+                      <span className="font-medium">Portable / Setup</span>
+                      <span className="ml-1.5 text-xs text-ink-faint">.exe</span>
+                    </span>
+                  </a>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* ── macOS (coming soon) ── */}
+          <button
+            onClick={() => setMacToast(true)}
+            className="inline-flex items-center gap-2 rounded-full border border-line bg-paper px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-paper-alt"
+          >
+            <Apple size={16} />
+            Download for macOS
+          </button>
         </motion.div>
         <AssistantMock />
       </Container>
+
+      {/* ── macOS coming-soon toast ── */}
+      <AnimatePresence>
+        {macToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2"
+          >
+            <div className="flex items-center gap-3 rounded-xl border border-line bg-paper px-5 py-3.5 shadow-2xl shadow-black/15">
+              <Apple size={18} className="shrink-0 text-ink-faint" />
+              <div className="text-left">
+                <p className="text-sm font-medium text-ink">macOS version coming soon!</p>
+                <p className="text-xs text-ink-muted">We're working on it — stay tuned.</p>
+              </div>
+              <button onClick={() => setMacToast(false)} className="ml-2 rounded-lg p-1 text-ink-faint transition-colors hover:bg-paper-alt hover:text-ink">
+                <X size={14} />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }
