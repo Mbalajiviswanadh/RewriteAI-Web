@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { @apply scroll-smooth antialiased; }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  body { @apply bg-paper font-sans text-ink; }
+  ::selection { @apply bg-brand text-white; }
+  :focus-visible { @apply outline outline-2 outline-offset-2 outline-brand; }
+}
+
+@layer components {
+  .h-display { @apply font-serif font-normal tracking-tight; }
+}
