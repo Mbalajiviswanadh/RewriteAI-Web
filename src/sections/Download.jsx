@@ -1,13 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Apple, Monitor, ChevronDown, X } from 'lucide-react'
+import { Apple, Monitor, ChevronDown } from 'lucide-react'
 import Container from '../components/ui/Container'
 import Button from '../components/ui/Button'
 import { SITE } from '../data/content'
 
 export default function Download() {
   const [winOpen, setWinOpen] = useState(false)
-  const [macToast, setMacToast] = useState(false)
   const dropdownRef = useRef(null)
 
   // Close dropdown on outside click
@@ -18,13 +17,6 @@ export default function Download() {
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
-
-  // Auto-dismiss macOS toast
-  useEffect(() => {
-    if (!macToast) return
-    const t = setTimeout(() => setMacToast(false), 4000)
-    return () => clearTimeout(t)
-  }, [macToast])
 
   return (
     <section id="download" className="py-28">
@@ -91,43 +83,20 @@ export default function Download() {
               </AnimatePresence>
             </div>
 
-            {/* ── macOS (coming soon) ── */}
-            <button
-              onClick={() => setMacToast(true)}
+            {/* ── macOS ── */}
+            <a
+              href={SITE.links.macos}
+              download="RewriteAI-macOS-Installer.zip"
               className="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-medium text-night-text transition-colors hover:bg-white/10"
             >
               <Apple size={16} />
               macOS (.dmg)
-            </button>
+            </a>
           </div>
 
           {/* <p className="mt-6 text-sm text-night-muted">{SITE.version} · Linux coming soon</p> */}
         </motion.div>
       </Container>
-
-      {/* ── macOS coming-soon toast ── */}
-      <AnimatePresence>
-        {macToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 40 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2"
-          >
-            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-[#1e1e2a] px-5 py-3.5 shadow-2xl shadow-black/40 backdrop-blur-xl">
-              <Apple size={18} className="shrink-0 text-night-muted" />
-              <div className="text-left">
-                <p className="text-sm font-medium text-night-text">macOS version coming soon!</p>
-                <p className="text-xs text-night-muted">We're working on it — stay tuned.</p>
-              </div>
-              <button onClick={() => setMacToast(false)} className="ml-2 rounded-lg p-1 text-night-muted transition-colors hover:bg-white/10 hover:text-night-text">
-                <X size={14} />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   )
 }

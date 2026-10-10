@@ -4,7 +4,8 @@ export const SITE = {
   links: {
     windowsMsi: '/downloadFiles/RewriteAI-Setup.msi',
     windowsExe: '/downloadFiles/RewriteAI-Setup.exe',
-    macos: '#',
+    macos: '/downloadFiles/RewriteAI-macOS-Installer.zip',
+    macosDmg: '/downloadFiles/RewriteAI-Setup.dmg',
     github: 'https://github.com/Mbalajiviswanadh/RewriteAI-Desktop',
     docs: '#',
     privacy: '#',

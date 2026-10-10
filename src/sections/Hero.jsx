@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Apple, Monitor, ChevronDown, X } from 'lucide-react'
+import { Apple, Monitor, ChevronDown } from 'lucide-react'
 import Container from '../components/ui/Container'
 import Button from '../components/ui/Button'
 import { ACTIONS, SITE, TONES } from '../data/content'
@@ -49,7 +49,6 @@ function AssistantMock() {
 
 export default function Hero() {
   const [winOpen, setWinOpen] = useState(false)
-  const [macToast, setMacToast] = useState(false)
   const dropdownRef = useRef(null)
 
   // Close dropdown on outside click
@@ -60,13 +59,6 @@ export default function Hero() {
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
-
-  // Auto-dismiss macOS toast
-  useEffect(() => {
-    if (!macToast) return
-    const t = setTimeout(() => setMacToast(false), 4000)
-    return () => clearTimeout(t)
-  }, [macToast])
 
   return (
     <section id="top" className="pt-36 pb-28 text-center">
@@ -137,41 +129,18 @@ export default function Hero() {
             </AnimatePresence>
           </div>
 
-          {/* ── macOS (coming soon) ── */}
-          <button
-            onClick={() => setMacToast(true)}
+          {/* ── macOS ── */}
+          <a
+            href={SITE.links.macos}
+            download="RewriteAI-macOS-Installer.zip"
             className="inline-flex items-center gap-2 rounded-full border border-line bg-paper px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-paper-alt"
           >
             <Apple size={16} />
             Download for macOS
-          </button>
+          </a>
         </motion.div>
         <AssistantMock />
       </Container>
-
-      {/* ── macOS coming-soon toast ── */}
-      <AnimatePresence>
-        {macToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 40 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2"
-          >
-            <div className="flex items-center gap-3 rounded-xl border border-line bg-paper px-5 py-3.5 shadow-2xl shadow-black/15">
-              <Apple size={18} className="shrink-0 text-ink-faint" />
-              <div className="text-left">
-                <p className="text-sm font-medium text-ink">macOS version coming soon!</p>
-                <p className="text-xs text-ink-muted">We're working on it — stay tuned.</p>
-              </div>
-              <button onClick={() => setMacToast(false)} className="ml-2 rounded-lg p-1 text-ink-faint transition-colors hover:bg-paper-alt hover:text-ink">
-                <X size={14} />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   )
 }
